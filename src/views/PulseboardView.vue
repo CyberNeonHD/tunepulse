@@ -262,6 +262,7 @@
 <script>
 export default {
   name: "PulseboardView",
+
   methods: {
     scrollToSection(id) {
       const el = document.getElementById(id);
@@ -269,6 +270,19 @@ export default {
         el.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     },
+  },
+
+  async mounted() {
+    try {
+      const res = await fetch("http://127.0.0.1:3001/api/spotify/top-artists", {
+        credentials: "include", // stuur cookies mee
+      });
+
+      const data = await res.json();
+      console.log("Top artists response:", data);
+    } catch (err) {
+      console.error("Error fetching top artists:", err);
+    }
   },
 };
 </script>

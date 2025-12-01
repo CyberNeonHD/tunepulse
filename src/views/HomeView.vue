@@ -420,7 +420,7 @@ export default {
   name: "HomeView",
   methods: {
     handleSpotifyLogin() {
-      this.$router.push({ name: "wip" });
+      window.location.href = "http://127.0.0.1:3001/api/auth/spotify";
     },
     scrollToPreview() {
       const el = document.getElementById("preview");
