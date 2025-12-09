@@ -18,31 +18,45 @@ router.get("/top-artists", async (req, res) => {
 
   // query params uit frontend
   const timeRange = req.query.time_range || "medium_term"; // short_term | medium_term | long_term
-  const limitParam = parseInt(req.query.limit, 10);
-  const limit = Number.isNaN(limitParam) ? 50 : Math.min(Math.max(limitParam, 1), 100);
 
   try {
-    const response = await axios.get(
-      "https://api.spotify.com/v1/me/top/artists",
-      {
+    // Spotify API heeft max 50 items per request
+    // Dus voor top 100: doen we 2 requests (offset 0 en offset 50)
+    const [response1, response2] = await Promise.all([
+      axios.get("https://api.spotify.com/v1/me/top/artists", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
         params: {
           time_range: timeRange,
-          limit,
+          limit: 50,
+          offset: 0,
         },
-      }
-    );
+      }),
+      axios.get("https://api.spotify.com/v1/me/top/artists", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        params: {
+          time_range: timeRange,
+          limit: 50,
+          offset: 50,
+        },
+      }),
+    ]);
 
-    const items = response.data.items || [];
-    const total = typeof response.data.total === "number"
-      ? response.data.total
-      : items.length;
+    // Combineer de resultaten
+    const items1 = response1.data.items || [];
+    const items2 = response2.data.items || [];
+    const allItems = [...items1, ...items2];
+
+    const total = typeof response1.data.total === "number"
+      ? response1.data.total
+      : allItems.length;
 
     return res.json({
       ok: true,
-      items,
+      items: allItems,
       total,
       time_range: timeRange,
     });
