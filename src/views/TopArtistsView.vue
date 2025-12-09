@@ -252,7 +252,7 @@ export default {
       try {
         const params = new URLSearchParams({
           time_range: this.selectedRange,
-          limit: 50, // later eventueel 100
+          // Backend haalt automatisch top 100 op (2x 50 met offset)
         });
 
         const res = await fetch(
