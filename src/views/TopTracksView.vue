@@ -15,7 +15,9 @@
               <span class="font-semibold tracking-tight text-lg">TunePulse</span>
               <span class="text-xs text-slate-500">/ Top 100 tracks</span>
             </div>
-            <p class="text-xs text-slate-400">Your most played songs (demo view)</p>
+            <p class="text-xs text-slate-400">
+              The tracks that define your listening · live Spotify data
+            </p>
           </div>
         </div>
 
@@ -23,7 +25,8 @@
           <button
             type="button"
             @click="$router.push({ name: 'pulseboard' })"
-            class="text-xs px-3 py-1.5 rounded-full border border-white/10 text-slate-300 hover:border-emerald-400/60 hover:text-emerald-200 transition-colors"
+            class="text-xs px-3 py-1.5 rounded-full border border-white/10 text-slate-300
+                   hover:border-emerald-400/60 hover:text-emerald-200 transition-colors"
           >
             ← Back to Pulseboard
           </button>
@@ -40,21 +43,20 @@
             <div>
               <h1 class="text-xl sm:text-2xl font-semibold mb-1">Top 100 tracks</h1>
               <p class="text-sm text-slate-300 max-w-xl">
-                This view will show your top 100 most played tracks from Spotify for different time
-                ranges, including play counts, artists, albums and quick “open in Spotify” links.
-                For now this is a static frontend preview.
+                This view shows your most listened Spotify tracks for the selected time range,
+                including artists, albums and quick links to listen on Spotify.
               </p>
             </div>
 
             <div class="flex flex-col items-start sm:items-end gap-2">
-              <!-- Range selector -->
+              <!-- Time range selector -->
               <div class="flex items-center gap-2 text-[11px]">
                 <span class="text-slate-400">Time range:</span>
                 <button
                   v-for="range in ranges"
                   :key="range.value"
                   type="button"
-                  @click="selectedRange = range.value"
+                  @click="changeRange(range.value)"
                   class="px-2.5 py-1 rounded-full border text-[11px] transition-colors"
                   :class="selectedRange === range.value
                     ? 'border-emerald-400/70 bg-emerald-400/10 text-emerald-200'
@@ -64,146 +66,63 @@
                 </button>
               </div>
 
-              <!-- Layout selector -->
-              <div class="flex items-center gap-2 text-[11px]">
-                <span class="text-slate-400">Layout:</span>
-                <button
-                  v-for="opt in layoutOptions"
-                  :key="opt.value"
-                  type="button"
-                  @click="layoutMode = opt.value"
-                  class="px-2.5 py-1 rounded-full border text-[11px] transition-colors"
-                  :class="layoutMode === opt.value
-                    ? 'border-emerald-400/70 bg-emerald-400/10 text-emerald-200'
-                    : 'border-white/10 bg-slate-900/60 text-slate-300 hover:border-emerald-400/50 hover:text-emerald-200'"
-                >
-                  {{ opt.label }}
-                </button>
-              </div>
+              <!-- Layout selector (generic component) -->
+              <LayoutToggle
+                v-model="layoutMode"
+                :options="layoutOptions"
+                label="Layout:"
+              />
             </div>
           </div>
 
           <!-- Info badge -->
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[11px] text-slate-400">
-            <div class="flex items-center gap-2">
-              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-              <span>Frontend-only preview · no real Spotify data yet</span>
-            </div>
-            <div class="text-slate-500">
-              Current layout: <span class="text-emerald-200 font-medium">{{ layoutLabel }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- LIST LAYOUT -->
-        <div
-          v-if="layoutMode === 'list'"
-          class="mt-2 rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden"
-        >
-          <!-- Header row -->
           <div
-            class="grid grid-cols-[auto,2fr,1.6fr,1.6fr,auto,auto]
-                   gap-3 px-3 sm:px-4 py-2 border-b border-white/10
-                   text-[11px] text-slate-400"
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between
+                   gap-2 text-[11px] text-slate-400"
           >
-            <span>#</span>
-            <span>Track</span>
-            <span class="hidden sm:inline">Artist</span>
-            <span class="hidden sm:inline">Album</span>
-            <span class="text-right">Plays</span>
-            <span class="hidden sm:inline text-right">Length</span>
-          </div>
+            <div class="flex items-center gap-2">
+              <span
+                class="h-1.5 w-1.5 rounded-full"
+                :class="{
+                  'bg-amber-400 animate-pulse': loading,
+                  'bg-red-400': !loading && error,
+                  'bg-emerald-400': !loading && !error,
+                }"
+              ></span>
 
-          <!-- Rows -->
-          <div class="divide-y divide-white/5 text-xs">
-            <div
-              v-for="track in demoTracks"
-              :key="track.rank"
-              class="grid grid-cols-[auto,2fr,1.6fr,1.6fr,auto,auto]
-                     gap-3 px-3 sm:px-4 py-2 items-center
-                     hover:bg-slate-900/90 transition-colors"
-            >
-              <span class="text-[11px] text-slate-500">#{{ track.rank }}</span>
-
-              <div class="truncate">
-                <p class="truncate text-slate-100">{{ track.title }}</p>
-                <p class="truncate text-[11px] text-slate-500 sm:hidden">{{ track.artist }}</p>
-              </div>
-
-              <p class="hidden sm:inline truncate text-slate-300">{{ track.artist }}</p>
-              <p class="hidden sm:inline truncate text-slate-400">{{ track.album }}</p>
-
-              <span class="text-[11px] text-emerald-300 text-right">{{ track.plays }} plays</span>
-              <span class="hidden sm:inline text-[11px] text-slate-400 text-right">{{ track.length }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- GRID LAYOUT -->
-        <div
-          v-else-if="layoutMode === 'grid'"
-          class="mt-2 grid sm:grid-cols-2 lg:grid-cols-3 gap-4"
-        >
-          <article
-            v-for="track in demoTracks"
-            :key="track.rank"
-            class="rounded-2xl border border-white/10 bg-slate-900/70 p-4 flex flex-col gap-2 hover:border-emerald-400/60 hover:shadow-lg/40 transition-all"
-          >
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-[11px] text-slate-500">#{{ track.rank }}</span>
-              <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-400/40">
-                {{ track.plays }} plays
+              <span v-if="loading">
+                Loading your top tracks from Spotify…
+              </span>
+              <span v-else-if="error">
+                Failed to load top tracks: {{ error }}
+              </span>
+              <span v-else>
+                Loaded {{ tracks.length }} tracks from Spotify.
               </span>
             </div>
 
-            <div>
-              <p class="text-sm font-semibold text-slate-50 truncate">{{ track.title }}</p>
-              <p class="text-[11px] text-slate-400 truncate">{{ track.artist }}</p>
-              <p class="text-[11px] text-slate-500 truncate italic">{{ track.album }}</p>
-            </div>
-
-            <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1">
-              <span>Length: <span class="text-slate-200">{{ track.length }}</span></span>
-              <span class="text-emerald-300 cursor-default">Open in Spotify ↗</span>
-            </div>
-          </article>
-        </div>
-
-        <!-- COMPACT LAYOUT -->
-        <div
-          v-else
-          class="mt-2 rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden"
-        >
-          <div class="divide-y divide-white/5 text-xs">
-            <div
-              v-for="track in demoTracks"
-              :key="track.rank"
-              class="flex items-center gap-3 px-3 sm:px-4 py-2 hover:bg-slate-900/90 transition-colors"
-            >
-              <span class="text-[11px] text-slate-500 w-8">#{{ track.rank }}</span>
-
-              <div class="flex-1 min-w-0">
-                <p class="truncate text-slate-100">
-                  {{ track.title }}
-                  <span class="text-[11px] text-slate-500"> · {{ track.artist }}</span>
-                </p>
-                <p class="truncate text-[11px] text-slate-500">
-                  {{ track.album }}
-                </p>
-              </div>
-
-              <div class="flex flex-col items-end text-[11px] text-slate-400">
-                <span class="text-emerald-300">{{ track.plays }} plays</span>
-                <span>{{ track.length }}</span>
-              </div>
+            <div class="text-slate-500">
+              Current layout:
+              <span class="text-emerald-200 font-medium">{{ layoutLabel }}</span>
             </div>
           </div>
         </div>
 
-        <!-- Placeholder text -->
-        <p class="text-[11px] text-slate-500">
-          The final version will show all 100 tracks, with real Spotify data, sorting, search, filters and
-          direct Spotify links per row or card.
+        <!-- LAYOUT RENDER -->
+        <component
+          :is="currentLayoutComponent"
+          v-if="mappedTracks.length"
+          :items="mappedTracks"
+          :fields="layoutFields"
+          :config="layoutConfig"
+        />
+
+        <!-- Empty state -->
+        <p
+          v-else-if="!loading && !error"
+          class="text-xs text-slate-500 italic mt-4"
+        >
+          No tracks found for this time range.
         </p>
       </section>
     </main>
@@ -211,11 +130,22 @@
 </template>
 
 <script>
+import LayoutToggle from "@/components/LayoutToggle.vue";
+import ListLayout from "@/components/layouts/ListLayout.vue";
+import GridLayout from "@/components/layouts/GridLayout.vue";
+import CompactLayout from "@/components/layouts/CompactLayout.vue";
+
 export default {
   name: "TopTracksView",
+  components: {
+    LayoutToggle,
+    ListLayout,
+    GridLayout,
+    CompactLayout,
+  },
   data() {
     return {
-      selectedRange: "short_term",
+      selectedRange: "medium_term",
       layoutMode: "list",
       ranges: [
         { value: "short_term", label: "Last 4 weeks" },
@@ -227,72 +157,9 @@ export default {
         { value: "grid", label: "Grid" },
         { value: "compact", label: "Compact" },
       ],
-      demoTracks: [
-        {
-          rank: 1,
-          title: "Delilah (pull me out of this)",
-          artist: "Fred again..",
-          album: "Actual Life 3",
-          plays: 132,
-          length: "3:56",
-        },
-        {
-          rank: 2,
-          title: "B.O.T.A.",
-          artist: "Eliza Rose",
-          album: "B.O.T.A.",
-          plays: 118,
-          length: "4:24",
-        },
-        {
-          rank: 3,
-          title: "Adore You",
-          artist: "Fred again..",
-          album: "Actual Life 2",
-          plays: 103,
-          length: "3:12",
-        },
-        {
-          rank: 4,
-          title: "On Hold (Jamie xx Remix)",
-          artist: "The xx",
-          album: "On Hold (Remixes)",
-          plays: 97,
-          length: "3:31",
-        },
-        {
-          rank: 5,
-          title: "Better Off Alone",
-          artist: "Alice Deejay",
-          album: "Who Needs Guitars Anyway?",
-          plays: 88,
-          length: "3:36",
-        },
-        {
-          rank: 6,
-          title: "Opus",
-          artist: "Eric Prydz",
-          album: "Opus",
-          plays: 82,
-          length: "9:03",
-        },
-        {
-          rank: 7,
-          title: "Turn On The Lights again..",
-          artist: "Fred again.., Swedish House Mafia, Future",
-          album: "Turn On The Lights again..",
-          plays: 79,
-          length: "5:02",
-        },
-        {
-          rank: 8,
-          title: "Innerbloom",
-          artist: "RÜFÜS DU SOL",
-          album: "Bloom",
-          plays: 73,
-          length: "9:38",
-        },
-      ],
+      tracks: [],
+      loading: false,
+      error: null,
     };
   },
   computed: {
@@ -300,6 +167,165 @@ export default {
       const opt = this.layoutOptions.find((o) => o.value === this.layoutMode);
       return opt ? opt.label : this.layoutMode;
     },
+
+    // Kies welke layout-component we renderen
+    currentLayoutComponent() {
+      if (this.layoutMode === "grid") return GridLayout;
+      if (this.layoutMode === "compact") return CompactLayout;
+      return ListLayout; // default
+    },
+
+    // Mapping van Spotify track → generiek item voor de layouts
+    mappedTracks() {
+      return this.tracks.map((t) => ({
+        id: t.id,
+        title: t.name,
+        image: t.album?.images?.[0]?.url || t.album?.images?.[1]?.url || "",
+        link: t.external_urls?.spotify || "",
+        popularity: `${t.popularity} / 100`,
+        duration: this.formatDuration(t.duration_ms),
+        artist: this.artistList(t),
+        album: t.album?.name || "Unknown album",
+      }));
+    },
+
+    // Welke velden in de meta-blokken getoond worden
+    layoutFields() {
+      // Compact layout = alleen naam + link → geen meta
+      if (this.layoutMode === "compact") {
+        return {
+          top: [],
+          middle: [],
+          bottom: [],
+        };
+      }
+
+      // List layout: titel in meta (niet onder afbeelding)
+      if (this.layoutMode === "list") {
+        return {
+          top: [
+            { key: "title", label: "Title" },
+            { key: "artist", label: "Artist" },
+          ],
+          middle: [
+            { key: "popularity", label: "Popularity" },
+            { key: "duration", label: "Duration" },
+          ],
+          bottom: [
+            { key: "album", label: "Album" },
+          ],
+        };
+      }
+
+      // Grid krijgt standaard meta
+      return {
+        top: [
+          { key: "popularity", label: "Popularity" },
+          { key: "duration", label: "Duration" },
+        ],
+        middle: [
+          { key: "artist", label: "Artist" },
+        ],
+        bottom: [
+          { key: "album", label: "Album" },
+        ],
+      };
+    },
+
+    // Config voor de layouts
+    layoutConfig() {
+      const base = {
+        showRank: true,
+        imageColumnWidth: "12rem",
+        imageClass: "h-36 w-36 sm:h-40 sm:w-40",
+        titleClass: "text-lg sm:text-2xl",
+      };
+
+      if (this.layoutMode === "compact") {
+        return {
+          ...base,
+          showMeta: false,
+          linkShortText: "Spotify",
+          linkText: "Spotify",
+        };
+      }
+
+      if (this.layoutMode === "list") {
+        return {
+          ...base,
+          showMeta: true,
+          showTitleBelowImage: false, // titel staat in meta fields
+          linkShortText: "Spotify",
+          linkText: "Open track on Spotify",
+        };
+      }
+
+      // Grid: standaard met titel onder afbeelding
+      return {
+        ...base,
+        showMeta: true,
+        linkShortText: "Spotify",
+        linkText: "Open track on Spotify",
+      };
+    },
+  },
+  methods: {
+    async fetchTopTracks() {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const params = new URLSearchParams({
+          time_range: this.selectedRange,
+          // Backend haalt automatisch top 100 op (2x 50 met offset)
+        });
+
+        const res = await fetch(
+          `http://127.0.0.1:3001/api/spotify/top-tracks?${params.toString()}`,
+          {
+            credentials: "include",
+          }
+        );
+
+        const data = await res.json();
+        const items = Array.isArray(data.items)
+          ? data.items
+          : data.items?.items;
+
+        if (!res.ok || data.ok === false) {
+          throw new Error(data.message || data.error || "Unknown error");
+        }
+
+        this.tracks = items || [];
+      } catch (err) {
+        console.error("Error fetching top tracks:", err);
+        this.error = err.message || "Failed to load top tracks";
+        this.tracks = [];
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    changeRange(range) {
+      this.selectedRange = range;
+      this.fetchTopTracks();
+    },
+
+    artistList(track) {
+      if (!track.artists || !track.artists.length) return "Unknown artist";
+      return track.artists.map((a) => a.name).join(", ");
+    },
+
+    formatDuration(ms) {
+      if (!ms) return "—";
+      const totalSeconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    },
+  },
+  mounted() {
+    this.fetchTopTracks();
   },
 };
 </script>

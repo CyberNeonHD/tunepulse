@@ -39,8 +39,9 @@
             </div>
           </div>
 
-          <!-- Title -->
+          <!-- Title (optioneel te verbergen via config) -->
           <p
+            v-if="config.showTitleBelowImage !== false"
             :class="[
               'truncate max-w-full text-center',
               titleClass,
