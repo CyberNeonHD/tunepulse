@@ -1,3 +1,4 @@
+<!-- src/components/layouts/ListLayout.vue -->
 <template>
   <div class="mt-2 rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden">
     <div class="divide-y divide-white/5 text-sm">
@@ -7,60 +8,69 @@
         class="flex gap-8 px-8 py-5 items-stretch hover:bg-slate-900/90 transition-colors"
       >
         <!-- LEFT: image + title + rank -->
-        <div
-          class="shrink-0 flex flex-col items-center gap-2"
-          :style="{ width: config.imageColumnWidth || '12rem' }"
-        >
-          <!-- Rank (geen overlay op image) -->
-          <span
-            v-if="config.showRank"
-            class="text-[15px] text-slate-500"
-          >
-            #{{ index + 1 }}
-          </span>
+        <div class="flex-shrink-0 flex flex-col items-center gap-2"
+             :style="imageColumnStyle">
+          <div class="relative">
+            <!-- Rank badge -->
+            <span
+              v-if="config.showRank !== false"
+              class="absolute -top-3 -left-10 px-2 py-0.5 rounded-full
+                     text-[11px] font-medium
+                     bg-slate-950/90 border border-white/20 text-slate-200"
+            >
+              #{{ index + 1 }}
+            </span>
 
-          <!-- Image -->
-          <img
-            v-if="item.image"
-            :src="item.image"
-            alt="item image"
-            class="object-cover mx-auto"
-            :class="config.imageClass || 'h-36 w-36 sm:h-40 sm:w-40'"
-          />
-          <div
-            v-else
-            class="bg-slate-800/60 flex items-center justify-center text-xs text-slate-500 mx-auto"
-            :class="config.imageClass || 'h-36 w-36 sm:h-40 sm:w-40'"
-          >
-            No image
+            <!-- Image -->
+            <img
+              v-if="item.image"
+              :src="item.image"
+              :alt="item.title"
+              :class="imageClass"
+            />
+            <div
+              v-else
+              :class="[
+                imageClass,
+                'rounded-2xl bg-slate-800/60 flex items-center justify-center text-xs text-slate-500',
+              ]"
+            >
+              No image
+            </div>
           </div>
 
           <!-- Title -->
           <p
-            class="font-semibold text-slate-50 truncate text-center max-w-full"
-            :class="config.titleClass || 'text-lg sm:text-2xl'"
+            :class="[
+              'truncate max-w-full text-center',
+              titleClass,
+            ]"
           >
             {{ item.title }}
           </p>
         </div>
 
-        <!-- RIGHT: meta info -->
-        <div class="flex-1 flex flex-col justify-between gap-3 min-w-0">
-          <!-- Top stats -->
+        <!-- RIGHT: meta + link -->
+        <div class="flex-1 flex flex-col justify-between gap-2 sm:gap-3 min-w-0">
+          <!-- Top meta (fields.top) + link rechts -->
           <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-            <div class="text-[12px] sm:text-[13px] text-slate-300 space-y-1">
+            <!-- Top meta -->
+            <div
+              v-if="config.showMeta !== false && fields.top && fields.top.length"
+              class="text-[12px] sm:text-[13px] text-slate-300 space-y-1"
+            >
               <p
-                v-for="field in (fields.top || [])"
+                v-for="field in fields.top"
                 :key="field.key"
               >
                 <span class="text-slate-500">{{ field.label }}: </span>
                 <span class="text-slate-200">
-                  {{ item[field.key] ?? "—" }}
+                  {{ item[field.key] ?? '—' }}
                 </span>
               </p>
             </div>
 
-            <!-- Link button -->
+            <!-- Link rechtsboven -->
             <div class="text-right">
               <a
                 v-if="item.link"
@@ -71,17 +81,21 @@
                        text-[12px] text-emerald-200 hover:bg-emerald-400/20
                        hover:border-emerald-400/80 transition-colors"
               >
-                <span>{{ config.linkText || "Open item" }}</span>
+                <span>{{ config.linkText || 'Open' }}</span>
+                <span class="text-sm">↗</span>
               </a>
-              <span v-else class="text-[12px] text-slate-500">
+              <span
+                v-else
+                class="text-[12px] text-slate-500"
+              >
                 No link
               </span>
             </div>
           </div>
 
-          <!-- Middle metadata -->
+          <!-- Middle meta (fields.middle) -->
           <div
-            v-if="fields.middle && fields.middle.length"
+            v-if="config.showMeta !== false && fields.middle && fields.middle.length"
             class="text-[12px] sm:text-[13px] text-slate-300 space-y-1"
           >
             <p
@@ -90,14 +104,14 @@
             >
               <span class="text-slate-500">{{ field.label }}: </span>
               <span class="text-slate-200">
-                {{ item[field.key] ?? "—" }}
+                {{ item[field.key] ?? '—' }}
               </span>
             </p>
           </div>
 
-          <!-- Bottom metadata -->
+          <!-- Bottom meta (fields.bottom) -->
           <div
-            v-if="fields.bottom && fields.bottom.length"
+            v-if="config.showMeta !== false && fields.bottom && fields.bottom.length"
             class="pt-1 border-t border-white/5 mt-2"
           >
             <p
@@ -107,7 +121,7 @@
             >
               <span class="text-slate-500">{{ field.label }}: </span>
               <span class="text-slate-200">
-                {{ item[field.key] ?? "—" }}
+                {{ item[field.key] ?? 'N/A' }}
               </span>
             </p>
           </div>
@@ -132,6 +146,26 @@ export default {
     config: {
       type: Object,
       default: () => ({}),
+    },
+  },
+  computed: {
+    imageColumnStyle() {
+      if (this.config.imageColumnWidth) {
+        return { width: this.config.imageColumnWidth };
+      }
+      return { width: "12rem" };
+    },
+    imageClass() {
+      return (
+        this.config.imageClass ||
+        "h-36 w-36 sm:h-40 sm:w-40 rounded-2xl object-cover mx-auto"
+      );
+    },
+    titleClass() {
+      return (
+        this.config.titleClass ||
+        "text-lg sm:text-2xl font-semibold text-slate-50"
+      );
     },
   },
 };
