@@ -158,7 +158,9 @@ export default {
         { value: "compact", label: "Compact" },
       ],
       artists: [],
+      artistDetails: {}, // Map of artistId -> { topTrack, latestAlbum }
       loading: false,
+      loadingDetails: false,
       error: null,
     };
   },
@@ -177,17 +179,22 @@ export default {
 
     // Mapping van Spotify artist → generiek item voor de layouts
     mappedArtists() {
-      return this.artists.map((a) => ({
-        id: a.id,
-        title: a.name,
-        image: a.images?.[0]?.url || a.images?.[1]?.url || a.images?.[2]?.url || "",
-        link: a.external_urls?.spotify || "",
-        popularity: `${a.popularity} / 100`,
-        followers: this.formatFollowers(a.followers?.total),
-        genres: this.genreList(a) || "N/A",
-        lastAlbum: this.formatLastAlbum(a.latestAlbum),
-        topTrack: a.topTrack?.name || "N/A",
-      }));
+      return this.artists.map((a) => {
+        const details = this.artistDetails[a.id];
+        const isLoading = !details && this.loadingDetails;
+
+        return {
+          id: a.id,
+          title: a.name,
+          image: a.images?.[0]?.url || a.images?.[1]?.url || a.images?.[2]?.url || "",
+          link: a.external_urls?.spotify || "",
+          popularity: `${a.popularity} / 100`,
+          followers: this.formatFollowers(a.followers?.total),
+          genres: this.genreList(a) || "N/A",
+          lastAlbum: isLoading ? "Loading..." : this.formatLastAlbum(details?.latestAlbum),
+          topTrack: isLoading ? "Loading..." : (details?.topTrack?.name || "N/A"),
+        };
+      });
     },
 
     // Welke velden in de meta-blokken getoond worden
@@ -248,11 +255,11 @@ export default {
     async fetchTopArtists() {
       this.loading = true;
       this.error = null;
+      this.artistDetails = {};
 
       try {
         const params = new URLSearchParams({
           time_range: this.selectedRange,
-          // Backend haalt automatisch top 100 op (2x 50 met offset)
         });
 
         const res = await fetch(
@@ -272,13 +279,64 @@ export default {
         }
 
         this.artists = items || [];
+        this.loading = false;
+
+        // Start loading details in background
+        if (this.artists.length > 0) {
+          this.fetchArtistDetails();
+        }
       } catch (err) {
         console.error("Error fetching top artists:", err);
         this.error = err.message || "Failed to load top artists";
         this.artists = [];
-      } finally {
         this.loading = false;
       }
+    },
+
+    async fetchArtistDetails() {
+      this.loadingDetails = true;
+      const batchSize = 5;
+      const delayMs = 1000;
+
+      for (let i = 0; i < this.artists.length; i += batchSize) {
+        const batch = this.artists.slice(i, i + batchSize);
+        const artistIds = batch.map((a) => a.id);
+
+        try {
+          const res = await fetch(
+            "http://127.0.0.1:3001/api/spotify/artist-details",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ artistIds }),
+            }
+          );
+
+          const data = await res.json();
+
+          if (data.ok && data.results) {
+            // Update artistDetails reactively
+            const newDetails = { ...this.artistDetails };
+            for (const result of data.results) {
+              newDetails[result.artistId] = {
+                topTrack: result.topTrack,
+                latestAlbum: result.latestAlbum,
+              };
+            }
+            this.artistDetails = newDetails;
+          }
+        } catch (err) {
+          console.error("Error fetching artist details batch:", err);
+        }
+
+        // Wait before next batch (except for last batch)
+        if (i + batchSize < this.artists.length) {
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+        }
+      }
+
+      this.loadingDetails = false;
     },
 
     changeRange(range) {
