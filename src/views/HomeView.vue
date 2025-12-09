@@ -3,7 +3,7 @@
     <!-- Glowing background -->
     <div
       class="pointer-events-none fixed inset-0 -z-10
-             bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.06),_transparent_80%),_radial-gradient(circle_at_bottom,_rgba(147,51,234,0.04),_transparent_80%)]"
+             bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.06),transparent_80%),radial-gradient(circle_at_bottom,rgba(147,51,234,0.04),transparent_80%)]"
     ></div>
 
     <!-- HEADER -->
@@ -46,7 +46,7 @@
                    bg-emerald-500 text-slate-950
                    shadow-[0_0_15px_rgba(16,185,129,0.9)]
                    hover:bg-emerald-400
-                   transition-transform hover:-translate-y-[1px]"
+                   transition-transform hover:-translate-y-px"
           >
             <span>Log in with Spotify</span>
           </button>
@@ -97,7 +97,7 @@
                                     bg-emerald-500 text-slate-950
                                     shadow-[0_0_15px_rgba(16,185,129,0.85)]
                                     hover:bg-emerald-400
-                                    transition-transform hover:-translate-y-[1px]"
+                                    transition-transform hover:-translate-y-px"
                             >
                             <span>Start with your stats</span>
                             <span class="text-xl">→</span>
@@ -109,7 +109,7 @@
                     <div id="preview" class="relative">
                         <div
                             class="relative rounded-3xl border border-white/10
-                                bg-gradient-to-br from-slate-900/80 to-slate-900/40
+                                bg-linear-to-br from-slate-900/80 to-slate-900/40
                                 shadow-[0_0_45px_rgba(8,47,73,0.9)] p-4 sm:p-6"
                         >
                         <div class="flex items-center justify-between mb-4">

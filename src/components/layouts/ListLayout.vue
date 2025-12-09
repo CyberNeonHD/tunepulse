@@ -8,7 +8,7 @@
       >
         <!-- LEFT: image + title + rank -->
         <div
-          class="flex-shrink-0 flex flex-col items-center gap-2"
+          class="shrink-0 flex flex-col items-center gap-2"
           :style="{ width: config.imageColumnWidth || '12rem' }"
         >
           <!-- Rank (geen overlay op image) -->

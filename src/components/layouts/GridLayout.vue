@@ -19,7 +19,7 @@
         <span
           v-if="fields.top && fields.top[0]"
           class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10
-                 text-emerald-200 border border-emerald-400/40 truncate max-w-[10rem]"
+                 text-emerald-200 border border-emerald-400/40 truncate max-w-40"
         >
           {{ fields.top[0].label }}:
           {{ item[fields.top[0].key] ?? "—" }}
