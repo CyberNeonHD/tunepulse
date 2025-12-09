@@ -200,7 +200,24 @@ export default {
         };
       }
 
-      // List & grid krijgen de volledige meta
+      // List layout: titel in meta (niet onder afbeelding)
+      if (this.layoutMode === "list") {
+        return {
+          top: [
+            { key: "title", label: "Title" },
+            { key: "artist", label: "Artist" },
+          ],
+          middle: [
+            { key: "popularity", label: "Popularity" },
+            { key: "duration", label: "Duration" },
+          ],
+          bottom: [
+            { key: "album", label: "Album" },
+          ],
+        };
+      }
+
+      // Grid krijgt standaard meta
       return {
         top: [
           { key: "popularity", label: "Popularity" },
@@ -233,7 +250,17 @@ export default {
         };
       }
 
-      // List & grid: rijke meta + langere linktekst
+      if (this.layoutMode === "list") {
+        return {
+          ...base,
+          showMeta: true,
+          showTitleBelowImage: false, // titel staat in meta fields
+          linkShortText: "Spotify",
+          linkText: "Open track on Spotify",
+        };
+      }
+
+      // Grid: standaard met titel onder afbeelding
       return {
         ...base,
         showMeta: true,
