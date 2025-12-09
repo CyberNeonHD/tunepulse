@@ -50,13 +50,70 @@ router.get("/top-artists", async (req, res) => {
     const items2 = response2.data.items || [];
     const allItems = [...items1, ...items2];
 
+    // Fetch top track and latest album for each artist in parallel
+    const enrichedItems = await Promise.all(
+      allItems.map(async (artist) => {
+        try {
+          // Fetch top tracks and albums in parallel for this artist
+          const [topTracksRes, albumsRes] = await Promise.all([
+            axios.get(`https://api.spotify.com/v1/artists/${artist.id}/top-tracks`, {
+              headers: { Authorization: `Bearer ${accessToken}` },
+              params: { market: "US" },
+            }).catch(() => null),
+            axios.get(`https://api.spotify.com/v1/artists/${artist.id}/albums`, {
+              headers: { Authorization: `Bearer ${accessToken}` },
+              params: {
+                include_groups: "album",
+                limit: 50,
+              },
+            }).catch(() => null),
+          ]);
+
+          // Get the top track (first one is most popular)
+          const topTrack = topTracksRes?.data?.tracks?.[0] || null;
+
+          // Get the latest album (sort by release_date descending)
+          const albums = albumsRes?.data?.items || [];
+          const sortedAlbums = albums.sort((a, b) => {
+            const dateA = new Date(a.release_date || "1900-01-01");
+            const dateB = new Date(b.release_date || "1900-01-01");
+            return dateB - dateA;
+          });
+          const latestAlbum = sortedAlbums[0] || null;
+
+          return {
+            ...artist,
+            topTrack: topTrack ? {
+              name: topTrack.name,
+              id: topTrack.id,
+              url: topTrack.external_urls?.spotify || null,
+            } : null,
+            latestAlbum: latestAlbum ? {
+              name: latestAlbum.name,
+              id: latestAlbum.id,
+              releaseDate: latestAlbum.release_date || null,
+              url: latestAlbum.external_urls?.spotify || null,
+            } : null,
+          };
+        } catch (err) {
+          // If fetching extra data fails, return artist without enrichment
+          console.error(`Error enriching artist ${artist.id}:`, err.message);
+          return {
+            ...artist,
+            topTrack: null,
+            latestAlbum: null,
+          };
+        }
+      })
+    );
+
     const total = typeof response1.data.total === "number"
       ? response1.data.total
-      : allItems.length;
+      : enrichedItems.length;
 
     return res.json({
       ok: true,
-      items: allItems,
+      items: enrichedItems,
       total,
       time_range: timeRange,
     });

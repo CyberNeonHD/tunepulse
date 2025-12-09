@@ -185,8 +185,8 @@ export default {
         popularity: `${a.popularity} / 100`,
         followers: this.formatFollowers(a.followers?.total),
         genres: this.genreList(a) || "N/A",
-        lastAlbum: "Coming soon", // later: echte data via backend
-        topTrack: "Coming soon",  // later: echte data via backend
+        lastAlbum: this.formatLastAlbum(a.latestAlbum),
+        topTrack: a.topTrack?.name || "N/A",
       }));
     },
 
@@ -300,6 +300,21 @@ export default {
       if (n >= 1_000)
         return (n / 1_000).toFixed(1).replace(/\.0$/, "") + "K";
       return n.toString();
+    },
+
+    formatLastAlbum(album) {
+      if (!album || !album.name) return "N/A";
+      if (!album.releaseDate) return album.name;
+
+      // Parse release date and format to EU format (DD-MM-YYYY)
+      const date = new Date(album.releaseDate);
+      if (isNaN(date.getTime())) return album.name;
+
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+
+      return `${album.name} [Released ${day}-${month}-${year}]`;
     },
   },
   mounted() {
