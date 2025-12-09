@@ -3,7 +3,7 @@
     <!-- Background glow -->
     <div
       class="pointer-events-none fixed inset-0 -z-10
-             bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.06),_transparent_80%),_radial-gradient(circle_at_bottom,_rgba(16,185,129,0.05),_transparent_80%)]"
+             bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.06),transparent_80%),radial-gradient(circle_at_bottom,rgba(16,185,129,0.05),transparent_80%)]"
     ></div>
 
     <!-- HEADER -->

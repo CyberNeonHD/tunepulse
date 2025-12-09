@@ -35,7 +35,7 @@
           v-if="item.image"
           :src="item.image"
           :alt="item.title"
-          class="h-10 w-10 rounded-full object-cover flex-shrink-0"
+          class="h-10 w-10 object-cover shrink-0"
         />
         <div class="min-w-0">
           <p class="text-sm font-semibold text-slate-50 truncate">

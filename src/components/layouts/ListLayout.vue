@@ -8,7 +8,7 @@
         class="flex gap-8 px-8 py-5 items-stretch hover:bg-slate-900/90 transition-colors"
       >
         <!-- LEFT: image + title + rank -->
-        <div class="flex-shrink-0 flex flex-col items-center gap-2"
+        <div class="shrink-0 flex flex-col items-center gap-2"
              :style="imageColumnStyle">
           <div class="relative">
             <!-- Rank badge -->
