@@ -49,7 +49,7 @@
             </div>
 
             <div class="flex flex-col items-start sm:items-end gap-2">
-              <!-- Range selector -->
+              <!-- Time range selector -->
               <div class="flex items-center gap-2 text-[11px]">
                 <span class="text-slate-400">Time range:</span>
                 <button
@@ -66,22 +66,12 @@
                 </button>
               </div>
 
-              <!-- Layout selector -->
-              <div class="flex items-center gap-2 text-[11px]">
-                <span class="text-slate-400">Layout:</span>
-                <button
-                  v-for="opt in layoutOptions"
-                  :key="opt.value"
-                  type="button"
-                  @click="layoutMode = opt.value"
-                  class="px-2.5 py-1 rounded-full border text-[11px] transition-colors"
-                  :class="layoutMode === opt.value
-                    ? 'border-emerald-400/70 bg-emerald-400/10 text-emerald-200'
-                    : 'border-white/10 bg-slate-900/60 text-slate-300 hover:border-emerald-400/50 hover:text-emerald-200'"
-                >
-                  {{ opt.label }}
-                </button>
-              </div>
+              <!-- Layout selector (generic component) -->
+              <LayoutToggle
+                v-model="layoutMode"
+                :options="layoutOptions"
+                label="Layout:"
+              />
             </div>
           </div>
 
@@ -110,6 +100,7 @@
                 Loaded {{ artists.length }} artists from Spotify.
               </span>
             </div>
+
             <div class="text-slate-500">
               Current layout:
               <span class="text-emerald-200 font-medium">{{ layoutLabel }}</span>
@@ -117,227 +108,41 @@
           </div>
         </div>
 
-        <!-- LIST LAYOUT (bigger, with Spotify link column) -->
-        <div
-          v-if="layoutMode === 'list'"
-          class="mt-2 rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden"
+        <!-- LAYOUT RENDER -->
+        <component
+          :is="currentLayoutComponent"
+          v-if="mappedArtists.length"
+          :items="mappedArtists"
+          :fields="layoutFields"
+          :config="layoutConfig"
+        />
+
+        <!-- Empty state -->
+        <p
+          v-else-if="!loading && !error"
+          class="text-xs text-slate-500 italic mt-4"
         >
-          <!-- Header row [Rebuild better]
-          <div
-            class="grid grid-cols-[60px,auto,2fr,auto,auto]
-                   gap-4 px-4 py-3 border-b border-white/10
-                   text-[12px] font-medium text-slate-400"
-          >
-            <span>#</span>
-            <span>Artist</span>
-            <span class="hidden sm:inline text-lift">Spotify Link</span>
-            <span class="text-right">Popularity</span>
-            <span class="hidden sm:inline text-right">Genres</span>
-          </div> --> 
-
-          <!-- Rows – redesigned artist card layout -->
-          <div class="divide-y divide-white/5 text-sm">
-            <div
-              v-for="(artist, index) in artists"
-              :key="artist.id"
-              class="flex gap-8 px-8 py-5 items-stretch hover:bg-slate-900/90 transition-colors"
-            >
-              <!-- LEFT: image + name + rank -->
-              <div class="flex-shrink-0 flex flex-col items-center gap-2 w-40 sm:w-48">
-                <div class="relative">
-                  <!-- Rank badge -->
-                  <span
-                    class="absolute -top-3 -left-10 px-2 py-0.5 rounded-full
-                          text-[11px] font-medium
-                          bg-slate-950/90 border border-white/20 text-slate-200"
-                  >
-                    #{{ index + 1 }}
-                  </span>
-
-                  <!-- Artist image -->
-                  <img
-                    v-if="artist.images && artist.images.length"
-                    :src="artist.images[0]?.url || artist.images[1]?.url || artist.images[2]?.url"
-                    alt="Artist image"
-                    class="h-36 w-36 sm:h-40 sm:w-40 object-cover mx-auto"
-                  />
-                  <div v-else class="h-36 w-36 sm:h-40 sm:w-40 rounded-2xl bg-slate-800/60 flex items-center justify-center text-xs text-slate-500">
-                    No image
-                  </div>
-                </div>
-
-                <!-- Artist name -->
-                <p class="text-lg sm:text-2xl font-semibold text-slate-50 truncate max-w-full">
-                  {{ artist.name }}
-                </p>
-              </div>
-
-              <!-- RIGHT: stats + link -->
-              <div class="flex-1 flex flex-col justify-between gap-2 sm:gap-3 min-w-0">
-                <!-- Top stats (popularity + followers) -->
-                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                  <div class="text-[12px] sm:text-[13px] text-slate-300 space-y-1">
-                    <p>
-                      <span class="text-slate-500">Popularity: </span>
-                      <span class="text-emerald-300 font-medium">
-                        {{ artist.popularity }} / 100
-                      </span>
-                    </p>
-                    <p>
-                      <span class="text-slate-500">Followers: </span>
-                      <span class="text-slate-200">
-                        {{ formatFollowers(artist.followers?.total) }}
-                      </span>
-                    </p>
-                  </div>
-
-                  <!-- Spotify link (top-right-ish) -->
-                  <div class="text-right">
-                    <a
-                      v-if="artist.external_urls && artist.external_urls.spotify"
-                      :href="artist.external_urls.spotify"
-                      target="_blank"
-                      class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full
-                            border border-emerald-400/40 bg-emerald-400/10
-                            text-[12px] text-emerald-200 hover:bg-emerald-400/20
-                            hover:border-emerald-400/80 transition-colors"
-                    >
-                      <span>Open artist on Spotify</span>
-                      <span class="text-sm">↗</span>
-                    </a>
-                    <span v-else class="text-[12px] text-slate-500">No Spotify link</span>
-                  </div>
-                </div>
-
-                <!-- Middle meta: album + top track (placeholders for now) -->
-                <div class="text-[12px] sm:text-[13px] text-slate-300 space-y-1">
-                  <p>
-                    <span class="text-slate-500">Last album: </span>
-                    <span class="text-slate-200">
-                      Coming soon
-                    </span>
-                  </p>
-                  <p>
-                    <span class="text-slate-500">Best track: </span>
-                    <span class="text-slate-200">
-                      Coming soon
-                    </span>
-                  </p>
-                </div>
-
-                <!-- Genres -->
-                <div class="pt-1 border-t border-white/5 mt-2">
-                  <p class="text-[12px] sm:text-[13px] text-slate-300 truncate">
-                    <span class="text-slate-500">Genres: </span>
-                    <span class="text-slate-200">
-                      {{ genreList(artist) || '—' }}
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- GRID LAYOUT -->
-        <div
-          v-else-if="layoutMode === 'grid'"
-          class="mt-2 grid sm:grid-cols-2 lg:grid-cols-3 gap-4"
-        >
-          <article
-            v-for="(artist, index) in artists"
-            :key="artist.id"
-            class="rounded-2xl border border-white/10 bg-slate-900/70 p-4
-                   flex flex-col gap-2 hover:border-emerald-400/60 hover:shadow-lg/40 transition-all"
-          >
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-[11px] text-slate-500">#{{ index + 1 }}</span>
-              <span
-                class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10
-                       text-emerald-200 border border-emerald-400/40"
-              >
-                {{ primaryGenre(artist) || 'No genre' }}
-              </span>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <img
-                v-if="artist.images && artist.images.length"
-                :src="artist.images[1]?.url || artist.images[0]?.url"
-                alt="Artist image"
-                class="h-10 w-10 rounded-full object-cover flex-shrink-0"
-              />
-              <div class="min-w-0">
-                <p class="text-sm font-semibold text-slate-50 truncate">
-                  {{ artist.name }}
-                </p>
-                <p class="text-[11px] text-slate-400 truncate">
-                  Popularity: {{ artist.popularity }} / 100
-                </p>
-              </div>
-            </div>
-
-            <p class="text-[11px] text-slate-400 mt-1 truncate">
-              Genres:
-              <span class="text-slate-200">{{ genreList(artist) || '—' }}</span>
-            </p>
-
-            <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1">
-              <span class="text-slate-500">Profile</span>
-              <a
-                v-if="artist.external_urls && artist.external_urls.spotify"
-                :href="artist.external_urls.spotify"
-                target="_blank"
-                class="text-emerald-300 hover:text-emerald-100 underline-offset-2 hover:underline"
-              >
-                Open in Spotify ↗
-              </a>
-              <span v-else class="text-slate-500">No link</span>
-            </div>
-          </article>
-        </div>
-
-        <!-- COMPACT LAYOUT -->
-        <div
-          v-else
-          class="mt-2 rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden"
-        >
-          <div class="divide-y divide-white/5 text-xs">
-            <div
-              v-for="(artist, index) in artists"
-              :key="artist.id"
-              class="flex items-center gap-3 px-3 sm:px-4 py-2 hover:bg-slate-900/90 transition-colors"
-            >
-              <span class="text-[11px] text-slate-500 w-8">#{{ index + 1 }}</span>
-
-              <div class="flex-1 min-w-0">
-                <p class="truncate text-slate-100">
-                  {{ artist.name }}
-                  <span class="text-[11px] text-slate-500">
-                    · {{ primaryGenre(artist) || '—' }}
-                  </span>
-                </p>
-
-                <p class="truncate text-[11px] text-slate-500">
-                  Genres: {{ genreList(artist) || '—' }}
-                </p>
-              </div>
-
-              <div class="flex flex-col items-end text-[11px] text-slate-400">
-                <span class="text-emerald-300">{{ artist.popularity }} / 100</span>
-                <span>Popularity</span>
-              </div>
-            </div>
-          </div>
-        </div>
+          No artists found for this time range.
+        </p>
       </section>
     </main>
   </div>
 </template>
 
 <script>
+import LayoutToggle from "@/components/LayoutToggle.vue";
+import ListLayout from "@/components/layouts/ListLayout.vue";
+import GridLayout from "@/components/layouts/GridLayout.vue";
+import CompactLayout from "@/components/layouts/CompactLayout.vue";
+
 export default {
   name: "TopArtistsView",
+  components: {
+    LayoutToggle,
+    ListLayout,
+    GridLayout,
+    CompactLayout,
+  },
   data() {
     return {
       selectedRange: "medium_term",
@@ -361,6 +166,82 @@ export default {
     layoutLabel() {
       const opt = this.layoutOptions.find((o) => o.value === this.layoutMode);
       return opt ? opt.label : this.layoutMode;
+    },
+
+    // Kies welke layout-component we renderen
+    currentLayoutComponent() {
+      if (this.layoutMode === "grid") return GridLayout;
+      if (this.layoutMode === "compact") return CompactLayout;
+      return ListLayout; // default
+    },
+
+    // Mapping van Spotify artist → generiek item voor de layouts
+    mappedArtists() {
+      return this.artists.map((a) => ({
+        id: a.id,
+        title: a.name,
+        image: a.images?.[0]?.url || a.images?.[1]?.url || a.images?.[2]?.url || "",
+        link: a.external_urls?.spotify || "",
+        popularity: `${a.popularity} / 100`,
+        followers: this.formatFollowers(a.followers?.total),
+        genres: this.genreList(a) || "N/A",
+        lastAlbum: "Coming soon", // later: echte data via backend
+        topTrack: "Coming soon",  // later: echte data via backend
+      }));
+    },
+
+    // Welke velden in de meta-blokken getoond worden
+    layoutFields() {
+      // Compact layout = alleen naam + link → geen meta
+      if (this.layoutMode === "compact") {
+        return {
+          top: [],
+          middle: [],
+          bottom: [],
+        };
+      }
+
+      // List & grid krijgen de volledige meta
+      return {
+        top: [
+          { key: "popularity", label: "Popularity" },
+          { key: "followers", label: "Followers" },
+        ],
+        middle: [
+          { key: "lastAlbum", label: "Last album" },
+          { key: "topTrack", label: "Best track" },
+        ],
+        bottom: [
+          { key: "genres", label: "Genres" },
+        ],
+      };
+    },
+
+    // Config voor de layouts
+    layoutConfig() {
+      const base = {
+        showRank: true,
+        imageColumnWidth: "12rem",
+        imageClass: "h-36 w-36 sm:h-40 sm:w-40",
+        titleClass: "text-lg sm:text-2xl",
+      };
+
+      if (this.layoutMode === "compact") {
+        return {
+          ...base,
+          showMeta: false,
+          linkShortText: "Spotify",
+          linkText: "Spotify",
+        };
+      }
+
+      // List & grid: rijke meta + langere linktekst
+      return {
+        ...base,
+        showMeta: true,
+        linkShortText: "Spotify",
+        linkText: "Open artist on Spotify",
+      };
     },
   },
   methods: {
@@ -405,10 +286,6 @@ export default {
       this.fetchTopArtists();
     },
 
-    primaryGenre(artist) {
-      return artist.genres && artist.genres.length ? artist.genres[0] : "";
-    },
-
     genreList(artist) {
       if (!artist.genres || !artist.genres.length) return "";
       return artist.genres.slice(0, 3).join(" · ");
@@ -418,8 +295,10 @@ export default {
       if (value === null || value === undefined) return "—";
       const n = Number(value);
       if (Number.isNaN(n)) return "—";
-      if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
-      if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, "") + "K";
+      if (n >= 1_000_000)
+        return (n / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
+      if (n >= 1_000)
+        return (n / 1_000).toFixed(1).replace(/\.0$/, "") + "K";
       return n.toString();
     },
   },
