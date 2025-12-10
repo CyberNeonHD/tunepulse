@@ -249,7 +249,17 @@ export default {
         };
       }
 
-      // List & grid: rijke meta + langere linktekst
+      if (this.layoutMode === "grid") {
+        return {
+          ...base,
+          showMeta: true,
+          verticalMeta: true, // Stack fields vertically
+          linkShortText: "Spotify",
+          linkText: "Open artist on Spotify",
+        };
+      }
+
+      // List: rijke meta + langere linktekst
       return {
         ...base,
         showMeta: true,
