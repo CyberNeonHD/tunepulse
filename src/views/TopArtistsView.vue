@@ -244,6 +244,7 @@ export default {
       if (this.layoutMode === "compact") {
         return {
           ...base,
+          showMeta: false,
           linkText: "Spotify",
         };
       }
