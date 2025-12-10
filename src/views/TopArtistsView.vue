@@ -96,8 +96,11 @@
               <span v-else-if="error">
                 Failed to load top artists: {{ error }}
               </span>
+              <span v-else-if="loadingDetails">
+                Loaded {{ artists.length }} artists. Fetching additional details…
+              </span>
               <span v-else>
-                Loaded {{ artists.length }} artists from Spotify.
+                Loaded {{ artists.length }} artists with full details.
               </span>
             </div>
 
@@ -158,7 +161,9 @@ export default {
         { value: "compact", label: "Compact" },
       ],
       artists: [],
+      artistDetails: {}, // Map of artistId -> { topTrack, latestAlbum }
       loading: false,
+      loadingDetails: false,
       error: null,
     };
   },
@@ -177,26 +182,34 @@ export default {
 
     // Mapping van Spotify artist → generiek item voor de layouts
     mappedArtists() {
-      return this.artists.map((a) => ({
-        id: a.id,
-        title: a.name,
-        image: a.images?.[0]?.url || a.images?.[1]?.url || a.images?.[2]?.url || "",
-        link: a.external_urls?.spotify || "",
-        popularity: `${a.popularity} / 100`,
-        followers: this.formatFollowers(a.followers?.total),
-        genres: this.genreList(a) || "N/A",
-        lastAlbum: "Coming soon", // later: echte data via backend
-        topTrack: "Coming soon",  // later: echte data via backend
-      }));
+      return this.artists.map((a) => {
+        const details = this.artistDetails[a.id];
+        const isLoading = !details && this.loadingDetails;
+
+        return {
+          id: a.id,
+          title: a.name,
+          image: a.images?.[0]?.url || a.images?.[1]?.url || a.images?.[2]?.url || "",
+          link: a.external_urls?.spotify || "",
+          popularity: `${a.popularity} / 100`,
+          followers: this.formatFollowers(a.followers?.total),
+          genres: this.genreList(a) || "N/A",
+          lastAlbum: isLoading ? "Loading..." : this.formatLastAlbum(details?.latestAlbum),
+          topTrack: isLoading ? "Loading..." : (details?.topTrack?.name || "N/A"),
+        };
+      });
     },
 
     // Welke velden in de meta-blokken getoond worden
     layoutFields() {
-      // Compact layout = alleen naam + link → geen meta
+      // Compact layout = alleen last album en best track (verticaal)
       if (this.layoutMode === "compact") {
         return {
           top: [],
-          middle: [],
+          middle: [
+            { key: "lastAlbum", label: "Last album" },
+            { key: "topTrack", label: "Best track" },
+          ],
           bottom: [],
         };
       }
@@ -221,25 +234,24 @@ export default {
     layoutConfig() {
       const base = {
         showRank: true,
+        showMeta: true,
         imageColumnWidth: "12rem",
         imageClass: "h-36 w-36 sm:h-40 sm:w-40",
         titleClass: "text-lg sm:text-2xl",
+        linkShortText: "Spotify",
       };
 
       if (this.layoutMode === "compact") {
         return {
           ...base,
           showMeta: false,
-          linkShortText: "Spotify",
           linkText: "Spotify",
         };
       }
 
-      // List & grid: rijke meta + langere linktekst
+      // List & grid
       return {
         ...base,
-        showMeta: true,
-        linkShortText: "Spotify",
         linkText: "Open artist on Spotify",
       };
     },
@@ -248,11 +260,11 @@ export default {
     async fetchTopArtists() {
       this.loading = true;
       this.error = null;
+      this.artistDetails = {};
 
       try {
         const params = new URLSearchParams({
           time_range: this.selectedRange,
-          // Backend haalt automatisch top 100 op (2x 50 met offset)
         });
 
         const res = await fetch(
@@ -272,13 +284,72 @@ export default {
         }
 
         this.artists = items || [];
+        this.loading = false;
+
+        // Start loading details in background
+        if (this.artists.length > 0) {
+          this.fetchArtistDetails();
+        }
       } catch (err) {
         console.error("Error fetching top artists:", err);
         this.error = err.message || "Failed to load top artists";
         this.artists = [];
-      } finally {
         this.loading = false;
       }
+    },
+
+    async fetchArtistDetails() {
+      this.loadingDetails = true;
+      const batchSize = 5;
+      const delayMs = 1000;
+
+      for (let i = 0; i < this.artists.length; i += batchSize) {
+        const batch = this.artists.slice(i, i + batchSize);
+        const artistIds = batch.map((a) => a.id);
+
+        try {
+          const res = await fetch(
+            "http://127.0.0.1:3001/api/spotify/artist-details",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ artistIds }),
+            }
+          );
+
+          const data = await res.json();
+
+          // Log rate limit info if present
+          if (data.rateLimited && data.rateLimited.length > 0) {
+            console.warn(
+              `[Rate Limit] Spotify rate limited ${data.rateLimited.length} artist(s):`,
+              data.rateLimited
+            );
+          }
+
+          if (data.ok && data.results) {
+            // Update artistDetails reactively
+            const newDetails = { ...this.artistDetails };
+            for (const result of data.results) {
+              newDetails[result.artistId] = {
+                topTrack: result.topTrack,
+                latestAlbum: result.latestAlbum,
+              };
+            }
+            this.artistDetails = newDetails;
+          }
+        } catch (err) {
+          console.error("Error fetching artist details batch:", err);
+        }
+
+        // Wait before next batch (except for last batch)
+        if (i + batchSize < this.artists.length) {
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+        }
+      }
+
+      this.loadingDetails = false;
     },
 
     changeRange(range) {
@@ -300,6 +371,21 @@ export default {
       if (n >= 1_000)
         return (n / 1_000).toFixed(1).replace(/\.0$/, "") + "K";
       return n.toString();
+    },
+
+    formatLastAlbum(album) {
+      if (!album || !album.name) return "N/A";
+      if (!album.releaseDate) return album.name;
+
+      // Parse release date and format to EU format (DD-MM-YYYY)
+      const date = new Date(album.releaseDate);
+      if (isNaN(date.getTime())) return album.name;
+
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+
+      return `${album.name} [Released ${day}-${month}-${year}]`;
     },
   },
   mounted() {
