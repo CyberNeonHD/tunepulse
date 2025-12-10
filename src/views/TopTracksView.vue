@@ -200,7 +200,7 @@ export default {
         };
       }
 
-      // List layout: titel in meta (niet onder afbeelding)
+      // List layout: titel in meta
       if (this.layoutMode === "list") {
         return {
           top: [
@@ -254,7 +254,7 @@ export default {
         return {
           ...base,
           showMeta: true,
-          showTitleBelowImage: false, // titel staat in meta fields
+          showTitleBelowImage: false,
           linkShortText: "Spotify",
           linkText: "Open track on Spotify",
         };
