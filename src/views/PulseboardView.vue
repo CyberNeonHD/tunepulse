@@ -22,7 +22,6 @@
         <div class="flex items-center gap-3">
             <div class="hidden sm:flex flex-col items-end">
                     <span class="text-xs text-slate-300">Logged in with Spotify</span>
-                    <span class="text-[11px] text-slate-500">Demo user</span>
             </div>
             <button
                 type="button"
@@ -51,21 +50,14 @@
                 </p>
             </div>
 
-            <div class="flex flex-col items-end gap-2 text-[11px] text-slate-400">
-            <span class="px-2 py-1 rounded-full border border-emerald-400/40 bg-emerald-400/10 text-emerald-200">
-                Frontend only · Demo data
-            </span>
-
-            <button
-                type="button"
-                @click="$router.push({ name: 'changelog' })"
-                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-white/10
-                    text-[11px] text-slate-300 hover:border-emerald-400/60 hover:text-emerald-200
-                    hover:bg-white/5 transition-colors"
-            >
-                <span>View changelog</span>
-                <span class="text-xs">↗</span>
-            </button>
+            <div>
+              <button
+                  type="button"
+                  @click="$router.push({ name: 'changelog' })"
+                  class="transition-all"
+              >
+                  <span class="text-base px-2 py-1 rounded-full border border-emerald-400/40 bg-emerald-400/10 text-emerald-200 hover:border-emerald-400/80 hover:bg-emerald-400/20 hover:text-emerald-100 transition-all">View changelog ↗</span>
+              </button>
             </div>
         </div>
 
