@@ -81,6 +81,8 @@ router.post("/artist-details", async (req, res) => {
   }
 
   try {
+    const rateLimited = [];
+
     const results = await Promise.all(
       artistIds.map(async (artistId) => {
         try {
@@ -88,11 +90,23 @@ router.post("/artist-details", async (req, res) => {
             axios.get(`https://api.spotify.com/v1/artists/${artistId}/top-tracks`, {
               headers: { Authorization: `Bearer ${accessToken}` },
               params: { market: "US" },
-            }).catch(() => null),
+            }).catch((err) => {
+              if (err.response?.status === 429) {
+                rateLimited.push({ artistId, endpoint: "top-tracks" });
+                console.warn(`[Rate Limit] 429 for artist ${artistId} top-tracks`);
+              }
+              return null;
+            }),
             axios.get(`https://api.spotify.com/v1/artists/${artistId}/albums`, {
               headers: { Authorization: `Bearer ${accessToken}` },
               params: { include_groups: "album,single", limit: 50 },
-            }).catch(() => null),
+            }).catch((err) => {
+              if (err.response?.status === 429) {
+                rateLimited.push({ artistId, endpoint: "albums" });
+                console.warn(`[Rate Limit] 429 for artist ${artistId} albums`);
+              }
+              return null;
+            }),
           ]);
 
           const topTrack = topTracksRes?.data?.tracks?.[0] || null;
@@ -124,7 +138,7 @@ router.post("/artist-details", async (req, res) => {
       })
     );
 
-    return res.json({ ok: true, results });
+    return res.json({ ok: true, results, rateLimited });
   } catch (err) {
     console.error("Error fetching artist details:", err.message);
     return res.status(500).json({

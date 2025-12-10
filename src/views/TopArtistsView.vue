@@ -96,8 +96,11 @@
               <span v-else-if="error">
                 Failed to load top artists: {{ error }}
               </span>
+              <span v-else-if="loadingDetails">
+                Loaded {{ artists.length }} artists. Fetching additional details…
+              </span>
               <span v-else>
-                Loaded {{ artists.length }} artists from Spotify.
+                Loaded {{ artists.length }} artists with full details.
               </span>
             </div>
 
@@ -199,11 +202,14 @@ export default {
 
     // Welke velden in de meta-blokken getoond worden
     layoutFields() {
-      // Compact layout = alleen naam + link → geen meta
+      // Compact layout = alleen last album en best track (verticaal)
       if (this.layoutMode === "compact") {
         return {
           top: [],
-          middle: [],
+          middle: [
+            { key: "lastAlbum", label: "Last album" },
+            { key: "topTrack", label: "Best track" },
+          ],
           bottom: [],
         };
       }
@@ -236,7 +242,8 @@ export default {
       if (this.layoutMode === "compact") {
         return {
           ...base,
-          showMeta: false,
+          showMeta: true,
+          verticalMeta: true, // Stack fields vertically
           linkShortText: "Spotify",
           linkText: "Spotify",
         };
@@ -314,6 +321,14 @@ export default {
           );
 
           const data = await res.json();
+
+          // Log rate limit info if present
+          if (data.rateLimited && data.rateLimited.length > 0) {
+            console.warn(
+              `[Rate Limit] Spotify rate limited ${data.rateLimited.length} artist(s):`,
+              data.rateLimited
+            );
+          }
 
           if (data.ok && data.results) {
             // Update artistDetails reactively

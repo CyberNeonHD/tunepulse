@@ -21,10 +21,25 @@
         </div>
 
         <!-- RECHTS: optionele meta / link -->
-        <div class="flex items-center gap-2 text-[11px] text-slate-400">
-          <!-- Meta (alle fields in één regel) - alleen als showMeta true is -->
+        <div class="flex items-center gap-3 text-[11px] text-slate-400">
+          <!-- Meta verticaal (als verticalMeta true is) -->
+          <div
+            v-if="config.showMeta !== false && config.verticalMeta && hasAnyFields"
+            class="hidden sm:flex flex-col gap-0.5 text-[11px] min-w-0"
+          >
+            <p
+              v-for="field in allFields"
+              :key="field.key"
+              class="truncate"
+            >
+              <span class="text-slate-500">{{ field.label }}:</span>
+              <span class="text-slate-300 ml-1">{{ item[field.key] ?? "—" }}</span>
+            </p>
+          </div>
+
+          <!-- Meta horizontaal (origineel, als verticalMeta niet true is) -->
           <p
-            v-if="config.showMeta !== false && hasAnyFields"
+            v-else-if="config.showMeta !== false && hasAnyFields"
             class="hidden sm:block truncate text-[11px] text-slate-500"
           >
             <span
@@ -46,7 +61,7 @@
             v-if="item.link"
             :href="item.link"
             target="_blank"
-            class="text-emerald-300 hover:text-emerald-100 underline-offset-2 hover:underline whitespace-nowrap"
+            class="text-emerald-300 hover:text-emerald-100 underline-offset-2 hover:underline whitespace-nowrap flex-shrink-0"
           >
             {{ config.linkShortText || "Open" }} ↗
           </a>
