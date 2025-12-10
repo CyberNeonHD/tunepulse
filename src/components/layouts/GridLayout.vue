@@ -55,9 +55,9 @@
         </div>
       </div>
 
-      <!-- Middle fields verticaal (als verticalMeta true is) -->
+      <!-- Middle fields (verticaal) -->
       <div
-        v-if="config.showMeta !== false && config.verticalMeta && fields.middle && fields.middle.length"
+        v-if="config.showMeta !== false && fields.middle && fields.middle.length"
         class="text-[11px] text-slate-400 mt-1 flex flex-col gap-0.5"
       >
         <p
@@ -69,23 +69,6 @@
           <span class="text-slate-300">{{ item[field.key] ?? "—" }}</span>
         </p>
       </div>
-
-      <!-- Middle fields horizontaal (origineel) -->
-      <p
-        v-else-if="config.showMeta !== false && fields.middle && fields.middle.length"
-        class="text-[11px] text-slate-400 mt-1 truncate"
-      >
-        <span
-          v-for="field in fields.middle"
-          :key="field.key"
-        >
-          <span class="text-slate-500">{{ field.label }}: </span>
-          <span class="text-slate-300">
-            {{ item[field.key] ?? "—" }}
-          </span>
-          <span class="text-slate-600"> · </span>
-        </span>
-      </p>
 
       <!-- Bottom fields (één regel) -->
       <p

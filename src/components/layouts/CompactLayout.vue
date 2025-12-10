@@ -22,9 +22,9 @@
 
         <!-- RECHTS: optionele meta / link -->
         <div class="flex items-center gap-3 text-[11px] text-slate-400">
-          <!-- Meta verticaal (als verticalMeta true is) -->
+          <!-- Meta (verticaal) -->
           <div
-            v-if="config.showMeta !== false && config.verticalMeta && hasAnyFields"
+            v-if="config.showMeta !== false && hasAnyFields"
             class="hidden sm:flex flex-col gap-0.5 text-[11px] min-w-0"
           >
             <p
@@ -36,25 +36,6 @@
               <span class="text-slate-300 ml-1">{{ item[field.key] ?? "—" }}</span>
             </p>
           </div>
-
-          <!-- Meta horizontaal (origineel, als verticalMeta niet true is) -->
-          <p
-            v-else-if="config.showMeta !== false && hasAnyFields"
-            class="hidden sm:block truncate text-[11px] text-slate-500"
-          >
-            <span
-              v-for="field in allFields"
-              :key="field.key"
-            >
-              <span class="text-slate-500">
-                {{ field.label }}:
-              </span>
-              <span class="text-slate-300">
-                {{ item[field.key] ?? "—" }}
-              </span>
-              <span class="text-slate-600"> · </span>
-            </span>
-          </p>
 
           <!-- Link -->
           <a

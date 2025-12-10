@@ -234,36 +234,23 @@ export default {
     layoutConfig() {
       const base = {
         showRank: true,
+        showMeta: true,
         imageColumnWidth: "12rem",
         imageClass: "h-36 w-36 sm:h-40 sm:w-40",
         titleClass: "text-lg sm:text-2xl",
+        linkShortText: "Spotify",
       };
 
       if (this.layoutMode === "compact") {
         return {
           ...base,
-          showMeta: true,
-          verticalMeta: true, // Stack fields vertically
-          linkShortText: "Spotify",
           linkText: "Spotify",
         };
       }
 
-      if (this.layoutMode === "grid") {
-        return {
-          ...base,
-          showMeta: true,
-          verticalMeta: true, // Stack fields vertically
-          linkShortText: "Spotify",
-          linkText: "Open artist on Spotify",
-        };
-      }
-
-      // List: rijke meta + langere linktekst
+      // List & grid
       return {
         ...base,
-        showMeta: true,
-        linkShortText: "Spotify",
         linkText: "Open artist on Spotify",
       };
     },
