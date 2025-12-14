@@ -48,26 +48,47 @@
         <!-- Latest version badge -->
         <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/10 text-xs sm:text-sm text-emerald-200">
           <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Latest: v0.4.0 · Performance & API Optimization</span>
+          <span>Latest: v0.5.0 · UI/UX Enhancements & Documentation</span>
         </div>
 
         <!-- Changelog list -->
         <div class="space-y-5 mt-4">
-          <!-- v0.4.0 -->
+          <!-- v0.5.0 -->
           <article class="rounded-2xl border border-white/10 bg-slate-900/70 p-4 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <div>
-                <h2 class="text-base font-semibold text-slate-100">v0.4.0 – Performance & API Optimization</h2>
-                <p class="text-xs sm:text-sm text-slate-500">December 2025 · Backend improvements</p>
+                <h2 class="text-base font-semibold text-slate-100">v0.5.0 – UI/UX Enhancements & Documentation</h2>
+                <p class="text-xs sm:text-sm text-slate-500">December 2025 · Pre-launch polish</p>
               </div>
               <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-400/40">
                 Current version
               </span>
             </div>
             <ul class="text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+              <li><strong>Custom 404 page:</strong> Added professional Not Found page with helpful navigation.</li>
+              <li><strong>Navigation updates:</strong> Replaced "Open Source" button with "Changelog" link in header.</li>
+              <li><strong>Open source visibility:</strong> Added "Open source" mentions to Features and How it Works sections.</li>
+              <li><strong>README overhaul:</strong> Complete rewrite with detailed project overview, setup instructions, and privacy details.</li>
+              <li><strong>Changelog improvements:</strong> Increased text sizes for better readability across all devices.</li>
+              <li><strong>GitHub links update:</strong> Updated repository links throughout the site.</li>
+              <li><strong>Pulseboard lockdown:</strong> Temporarily redirect Pulseboard routes to homepage for pre-launch.</li>
+            </ul>
+          </article>
+
+          <!-- v0.4.0 -->
+          <article class="rounded-2xl border border-white/5 bg-slate-900/60 p-4 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <h2 class="text-base font-semibold text-slate-100">v0.4.0 – Performance & API Optimization</h2>
+                <p class="text-xs sm:text-sm text-slate-500">December 2025 · Backend improvements</p>
+              </div>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300 border border-slate-600/70">
+                Archive
+              </span>
+            </div>
+            <ul class="text-sm text-slate-300 space-y-1.5 list-disc list-inside">
               <li><strong>Parallel API requests:</strong> Fetch top 100 items efficiently using two parallel Spotify API calls.</li>
               <li><strong>Rate limit handling:</strong> Built-in rate limit detection and logging to prevent API issues.</li>
-              <li><strong>Extra UI improvements:</strong> Tweaking UI elements</li>
             </ul>
           </article>
 
