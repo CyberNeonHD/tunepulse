@@ -27,16 +27,17 @@
         <nav class="hidden md:flex items-center gap-6 text-sm text-slate-300">
           <a href="#features" class="hover:text-emerald-300 transition-colors">Features</a>
           <a href="#how-it-works" class="hover:text-emerald-300 transition-colors">How it works</a>
+          <a href="#open-source" class="hover:text-emerald-300 transition-colors">Open Source</a>
         </nav>
 
         <div class="flex items-center gap-3">
           <a
-            href="#open-source"
+            href="/changelog"
             class="hidden sm:inline-flex text-xs sm:text-sm px-3 py-1.5 rounded-full border border-white/10
                     text-slate-300 hover:border-emerald-400/60 hover:text-emerald-200
                     transition-colors"
           >
-            Open source
+            Changelog
           </a>
 
           <button
@@ -156,7 +157,7 @@
         <p class="text-base text-slate-300 mb-6 max-w-2xl">
           TunePulse turns your Spotify listening history into rich, explorable lists.
           Jump straight into your top tracks and artists, complete with genres, albums
-          and more.
+          and more. <span class="font-semibold text-emerald-200">Open source</span> and built with privacy first.
         </p>
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -223,6 +224,7 @@
         <p class="text-base text-slate-300 mb-6 max-w-2xl">
           Under the hood, TunePulse uses the official Spotify Web API and a standard OAuth 2.0 flow.
           No passwords are ever seen by TunePulse, and access tokens are kept short-lived and in memory.
+          The entire codebase is <span class="font-semibold text-emerald-200">open source</span>, so you can verify exactly how your data is handled.
         </p>
 
         <div class="grid gap-5 md:grid-cols-3">

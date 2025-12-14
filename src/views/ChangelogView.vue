@@ -20,15 +20,16 @@
         </div>
 
         <div class="flex items-center gap-3">
-          <button
+          <!-- return to last page -->
+            <button
             type="button"
-            @click="$router.push({ name: 'pulseboard' })"
+            @click="$router.back()"
             class="text-xs px-3 py-1.5 rounded-full border border-white/10 text-slate-300
-                   hover:border-emerald-400/60 hover:text-emerald-200 hover:bg-white/5
-                   transition-colors"
-          >
-            ← Back to Pulseboard
-          </button>
+                 hover:border-emerald-400/60 hover:text-emerald-200 hover:bg-white/5
+                 transition-colors"  
+            >
+            ← Back
+            </button>
         </div>
       </div>
     </header>
