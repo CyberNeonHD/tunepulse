@@ -1,38 +1,68 @@
-# tunepulse-vue
+# TunePulse
 
-This template should help get you started developing with Vue 3 in Vite.
+**Privacy-friendly Spotify stats viewer with zero tracking.**
 
-## Recommended IDE Setup
+TunePulse visualizes your Spotify listening habits in beautiful, interactive charts. See your top artists, tracks, and genres across different time ranges, all without storing any personal data. No accounts, no tracking pixels, just your music stats rendered live in your browser.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Features
 
-## Recommended Browser Setup
+- **Top 100 Tracks** 
+    - View your most played songs across different time periods (last month, 6 months, all time) with direct Spotify links
+- **Top 100 Artists** 
+    - Discover which artists you listen to the most, with popularity metrics, genres, and quick links to their profiles
+- **Privacy-First** 
+    - No login system, no stored profiles, no tracking. Spotify tokens are kept in-memory only
+- **Open Source** 
+    - Fully transparent codebase. Audit the code, suggest improvements, or adapt it for yourself
+- **Beautiful UI** 
+    - Built with Vue 3 and Tailwind CSS for a modern, responsive experience
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+## How It Works
 
-## Customize configuration
+TunePulse uses the official Spotify Web API with OAuth 2.0 authentication:
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+1. **Log in with Spotify** 
+    - You authorize TunePulse to access your listening data through Spotify's official OAuth flow
+2. **Secure token exchange** 
+    - After approval, a short-lived access token is generated (never stored in a database)
+3. **Fetch & render** 
+    - Your stats are fetched from Spotify's API and rendered directly in your browser
+4. **No persistence** 
+    - Close the tab and your session is gone. No data is ever stored
 
-## Project Setup
+## Tech Stack
 
-```sh
-npm install
-```
+- **Frontend**: Vue 3
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **Backend**: Node.js (Spotify OAuth only)
+- **Analytics: TO DO: Plausible (privacy-focused, cookie-free)**
+- **Infrastructure**: Cloudflare Tunnels
 
-### Compile and Hot-Reload for Development
+## Privacy & Transparency
 
-```sh
-npm run dev
-```
+TunePulse is designed with privacy as a core principle:
 
-### Compile and Minify for Production
+- **No user accounts** 
+    - No email collection, no password storage
+- **No data persistence** 
+    - Spotify tokens are kept in-memory and discarded when you close the tab
+- **Minimal analytics** 
+    - Only cookie-free, anonymized page view stats via Plausible
+        - **This is not yet implemented** 
+- **No fingerprinting** 
+    - No cross-site tracking, no advertising IDs
+- **Open source** 
+    - Anyone can audit the code to verify these claims
 
-```sh
-npm run build
-```
+## Contributing
+
+Contributions are welcome! Feel free to:
+
+- Report bugs or suggest features via GitHub Issues
+- Submit pull requests for improvements
+- Fork the project for your own use
+
+## License
+
+This project is open source and available under the MIT License.
