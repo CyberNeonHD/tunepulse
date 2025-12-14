@@ -48,31 +48,61 @@
         <!-- Latest version badge -->
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-400/40 bg-emerald-400/10 text-[11px] text-emerald-200">
           <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Latest: v0.2.0 · Top Artists & Tracks Live</span>
+          <span>Latest: v0.4.0 · Performance & API Optimization</span>
         </div>
 
         <!-- Changelog list -->
         <div class="space-y-5 mt-4">
-          <!-- v0.2.0 -->
+          <!-- v0.4.0 -->
           <article class="rounded-2xl border border-white/10 bg-slate-900/70 p-4 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <div>
-                <h2 class="text-sm font-semibold text-slate-100">v0.2.0 – Top Artists & Tracks</h2>
-                <p class="text-[11px] text-slate-500">December 2025 · Live Spotify integration</p>
+                <h2 class="text-sm font-semibold text-slate-100">v0.4.0 – Performance & API Optimization</h2>
+                <p class="text-[11px] text-slate-500">December 2025 · Backend improvements</p>
               </div>
               <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-400/40">
                 Current version
               </span>
             </div>
             <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
-              <li><strong>Top 100 Artists view:</strong> Live data with artist popularity, followers, genres, last album and best track info.</li>
-              <li><strong>Top 100 Tracks view:</strong> Your most played songs with play counts, artists, albums and Spotify links.</li>
-              <li><strong>Multiple layout modes:</strong> Switch between List, Grid, and Compact views with responsive design.</li>
               <li><strong>Parallel API requests:</strong> Fetch top 100 items efficiently using two parallel Spotify API calls.</li>
-              <li><strong>Lazy loading & skeleton loaders:</strong> Artist details load on-demand with smooth loading states.</li>
               <li><strong>Rate limit handling:</strong> Built-in rate limit detection and logging to prevent API issues.</li>
-              <li><strong>UI/UX improvements:</strong> Improved responsive text sizing, removed demo labels, clearer feature descriptions.</li>
-              <li><strong>Layout enhancements:</strong> Vertical meta layout support, improved meta and link handling across all views.</li>
+            </ul>
+          </article>
+
+          <!-- v0.3.0 -->
+          <article class="rounded-2xl border border-white/5 bg-slate-900/60 p-4 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <h2 class="text-sm font-semibold text-slate-100">v0.3.0 – UI/UX Polish</h2>
+                <p class="text-[11px] text-slate-500">December 2025 · Design improvements</p>
+              </div>
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300 border border-slate-600/70">
+                Archive
+              </span>
+            </div>
+            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+              <li><strong>UI/UX improvements:</strong> Responsive text sizing, removed demo labels, clearer descriptions.</li>
+              <li><strong>Layout enhancements:</strong> Vertical meta layout support and improved handling across all views.</li>
+              <li><strong>Lazy loading & skeleton loaders:</strong> Smooth loading states for artist details.</li>
+            </ul>
+          </article>
+
+          <!-- v0.2.0 -->
+          <article class="rounded-2xl border border-white/5 bg-slate-900/60 p-4 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <h2 class="text-sm font-semibold text-slate-100">v0.2.0 – Top Artists & Tracks</h2>
+                <p class="text-[11px] text-slate-500">December 2025 · Live Spotify integration</p>
+              </div>
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300 border border-slate-600/70">
+                Archive
+              </span>
+            </div>
+            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+              <li><strong>Top 100 Artists view:</strong> Live data with popularity, followers, genres, last album and best track info.</li>
+              <li><strong>Top 100 Tracks view:</strong> Play counts, artists, albums, and Spotify links.</li>
+              <li><strong>Multiple layout modes:</strong> Switch between List, Grid, and Compact views with responsive design.</li>
             </ul>
           </article>
 
