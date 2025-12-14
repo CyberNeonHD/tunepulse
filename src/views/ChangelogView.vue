@@ -173,7 +173,7 @@
 
         <div class="flex items-center gap-3">
           <a
-            href="https://github.com/CyberNeonHD/TunePulse_old"
+            href="https://github.com/CyberNeonHD/TunePulse"
             target="_blank"
             class="px-3 py-1.5 rounded-full border border-white/10
                    text-[11px] text-slate-300 hover:border-emerald-400/60 hover:text-emerald-200

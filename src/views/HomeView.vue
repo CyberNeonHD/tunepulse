@@ -42,7 +42,7 @@
 
           <button
             type="button"
-            @click="handleSpotifyLogin"
+            @click="$router.push({ name: 'wip' })"
             class="relative inline-flex items-center gap-2 text-sm font-semibold
                    px-4 py-2 rounded-full
                    bg-emerald-500 text-slate-950
@@ -102,7 +102,6 @@
                          transition-transform hover:-translate-y-px"
                 >
                   <span>Start with your stats</span>
-                  <span class="text-xl">→</span>
                 </button>
               </div>
             </div>
@@ -366,7 +365,7 @@
             </p>
 
             <a
-              href="https://github.com/CyberNeonHD/TunePulse_old"
+              href="https://github.com/CyberNeonHD/TunePulse"
               target="_blank"
               class="inline-flex items-center gap-2 text-sm font-semibold
                      px-4 py-2 rounded-full mt-2
