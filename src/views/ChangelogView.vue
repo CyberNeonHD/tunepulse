@@ -39,15 +39,14 @@
       <section class="max-w-6xl mx-auto px-4 py-8 lg:py-10 space-y-6">
         <!-- Intro -->
         <div class="space-y-2">
-          <h1 class="text-xl sm:text-2xl font-semibold">Changelog</h1>
-          <p class="text-sm text-slate-300 max-w-xl">
-            A simple, transparent overview of what changed in TunePulse. Frontend-only for now,
-            but later this can be fed automatically from commits or releases.
+          <h1 class="text-3xl sm:text-4xl font-semibold">Changelog</h1>
+          <p class="text-base sm:text-lg text-slate-300 max-w-2xl">
+            A simple, transparent overview of what changed in TunePulse.
           </p>
         </div>
 
         <!-- Latest version badge -->
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-400/40 bg-emerald-400/10 text-[11px] text-emerald-200">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/10 text-xs sm:text-sm text-emerald-200">
           <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
           <span>Latest: v0.4.0 · Performance & API Optimization</span>
         </div>
@@ -58,16 +57,17 @@
           <article class="rounded-2xl border border-white/10 bg-slate-900/70 p-4 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <div>
-                <h2 class="text-sm font-semibold text-slate-100">v0.4.0 – Performance & API Optimization</h2>
-                <p class="text-[11px] text-slate-500">December 2025 · Backend improvements</p>
+                <h2 class="text-base font-semibold text-slate-100">v0.4.0 – Performance & API Optimization</h2>
+                <p class="text-xs sm:text-sm text-slate-500">December 2025 · Backend improvements</p>
               </div>
-              <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-400/40">
+              <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-400/40">
                 Current version
               </span>
             </div>
-            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+            <ul class="text-sm text-slate-300 space-y-1.5 list-disc list-inside">
               <li><strong>Parallel API requests:</strong> Fetch top 100 items efficiently using two parallel Spotify API calls.</li>
               <li><strong>Rate limit handling:</strong> Built-in rate limit detection and logging to prevent API issues.</li>
+              <li><strong>Extra UI improvements:</strong> Tweaking UI elements</li>
             </ul>
           </article>
 
@@ -75,14 +75,14 @@
           <article class="rounded-2xl border border-white/5 bg-slate-900/60 p-4 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <div>
-                <h2 class="text-sm font-semibold text-slate-100">v0.3.0 – UI/UX Polish</h2>
-                <p class="text-[11px] text-slate-500">December 2025 · Design improvements</p>
+                <h2 class="text-base font-semibold text-slate-100">v0.3.0 – UI/UX Polish</h2>
+                <p class="text-xs sm:text-sm text-slate-500">December 2025 · Design improvements</p>
               </div>
-              <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300 border border-slate-600/70">
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300 border border-slate-600/70">
                 Archive
               </span>
             </div>
-            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+            <ul class="text-sm text-slate-300 space-y-1.5 list-disc list-inside">
               <li><strong>UI/UX improvements:</strong> Responsive text sizing, removed demo labels, clearer descriptions.</li>
               <li><strong>Layout enhancements:</strong> Vertical meta layout support and improved handling across all views.</li>
               <li><strong>Lazy loading & skeleton loaders:</strong> Smooth loading states for artist details.</li>
@@ -93,14 +93,14 @@
           <article class="rounded-2xl border border-white/5 bg-slate-900/60 p-4 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <div>
-                <h2 class="text-sm font-semibold text-slate-100">v0.2.0 – Top Artists & Tracks</h2>
-                <p class="text-[11px] text-slate-500">December 2025 · Live Spotify integration</p>
+                <h2 class="text-base font-semibold text-slate-100">v0.2.0 – Top Artists & Tracks</h2>
+                <p class="text-xs sm:text-sm text-slate-500">December 2025 · Live Spotify integration</p>
               </div>
-              <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300 border border-slate-600/70">
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300 border border-slate-600/70">
                 Archive
               </span>
             </div>
-            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+            <ul class="text-sm text-slate-300 space-y-1.5 list-disc list-inside">
               <li><strong>Top 100 Artists view:</strong> Live data with popularity, followers, genres, last album and best track info.</li>
               <li><strong>Top 100 Tracks view:</strong> Play counts, artists, albums, and Spotify links.</li>
               <li><strong>Multiple layout modes:</strong> Switch between List, Grid, and Compact views with responsive design.</li>
@@ -111,17 +111,17 @@
           <article class="rounded-2xl border border-white/5 bg-slate-900/60 p-4 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <div>
-                <h2 class="text-sm font-semibold text-slate-100">v0.1.0 – Foundation release</h2>
-                <p class="text-[11px] text-slate-500">Early December 2025 · Initial Vue front-end</p>
+                <h2 class="text-base font-semibold text-slate-100">v0.1.0 – Foundation release</h2>
+                <p class="text-xs sm:text-sm text-slate-500">Early December 2025 · Initial Vue front-end</p>
               </div>
-              <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300 border border-slate-600/70">
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300 border border-slate-600/70">
                 Archive
               </span>
             </div>
-            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+            <ul class="text-sm text-slate-300 space-y-1.5 list-disc list-inside">
               <li>Landing page with hero, feature overview, "How it works" and "Open source" sections.</li>
               <li>Pulseboard dashboard with overview stats and quick links to Top 100 tracks & artists.</li>
-              <li>Initial routes for <span class="font-mono text-[11px]">/pulseboard/top-tracks</span> and <span class="font-mono text-[11px]">/pulseboard/top-artists</span>.</li>
+              <li>Initial routes for <span class="font-mono text-xs">/pulseboard/top-tracks</span> and <span class="font-mono text-xs">/pulseboard/top-artists</span>.</li>
               <li>Privacy-first copy and open source GitHub link integrated in the UI.</li>
             </ul>
           </article>
@@ -130,14 +130,14 @@
           <article class="rounded-2xl border border-white/5 bg-slate-900/60 p-4 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <div>
-                <h2 class="text-sm font-semibold text-slate-100">v0.0.1 – Concept & design</h2>
-                <p class="text-[11px] text-slate-500">2025-xx-xx · Pre-release</p>
+                <h2 class="text-base font-semibold text-slate-100">v0.0.1 – Concept & design</h2>
+                <p class="text-xs sm:text-sm text-slate-500">2025-xx-xx · Pre-release</p>
               </div>
-              <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300 border border-slate-600/70">
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300 border border-slate-600/70">
                 Archive
               </span>
             </div>
-            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+            <ul class="text-sm text-slate-300 space-y-1.5 list-disc list-inside">
               <li>Initial concept for TunePulse: Spotify stats viewer with no tracking.</li>
               <li>First Tailwind-based design experiments and layout tests.</li>
               <li>Decision to keep all analytics anonymous (Plausible + Cloudflare only).</li>
@@ -146,11 +146,11 @@
 
           <!-- Coming next -->
           <article class="rounded-2xl border border-dashed border-emerald-400/40 bg-emerald-400/5 p-4 space-y-2">
-            <h2 class="text-sm font-semibold text-emerald-200">Up next</h2>
-            <p class="text-xs text-emerald-100/90">
+            <h2 class="text-base font-semibold text-emerald-200">Up next</h2>
+            <p class="text-sm text-emerald-100/90">
               Note: Spotify's API has become more restrictive recently, so new features depend on what data is accessible.
             </p>
-            <ul class="text-xs text-emerald-100/90 space-y-1.5 list-disc list-inside">
+            <ul class="text-sm text-emerald-100/90 space-y-1.5 list-disc list-inside">
               <li>Dedicated Top albums view with album artwork and metadata.</li>
               <li>Genre distribution charts across different time ranges.</li>
               <li>Saving user-selected layout preferences per view (list/grid/compact).</li>
