@@ -4,6 +4,28 @@
 
 TunePulse visualizes your Spotify listening habits in beautiful, interactive charts. See your top artists, tracks, and genres across different time ranges, all without storing any personal data. No accounts, no tracking pixels, just your music stats rendered live in your browser.
 
+## Planned full release
+I´m planning to fully release TunePulse, before the end of this year.
+
+- Currently the following still needs to happen before the launch:
+    - Physical server: Extra security features
+    - Plausible implementation
+    - Fine-Tuning of rate-limits
+    - Testing the code for bugs: Last finishing touches for full V1.0.0 release
+      
+### Up next for V1.1.0 (After full release)
+
+- Dedicated Top albums view with album artwork and metadata.
+- Genre distribution charts across different time ranges.
+- Time range selector improvements and better filtering options.
+
+### Up next for V1.2.0
+- Saving (locally) user-selected layout preferences per view (list/grid/compact).
+- Better artist insights
+
+#### More to be announced later for V1.3.0
+Note: Spotify's API has become more restrictive recently, so new features depend on what data is accessible.
+
 ## Features
 
 - **Top 100 Tracks** 
