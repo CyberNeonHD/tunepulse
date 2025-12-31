@@ -5,7 +5,7 @@
 TunePulse visualizes your Spotify listening habits in beautiful, interactive charts. See your top artists, tracks, and genres across different time ranges, all without storing any personal data. No accounts, no tracking pixels, just your music stats rendered live in your browser.
 
 ## Planned full release
-I´m planning to fully release TunePulse, before the end of this year.
+I´m planning to fully release TunePulse around January.
 
 - Currently the following still needs to happen before the launch:
     - Physical server: Extra security features
