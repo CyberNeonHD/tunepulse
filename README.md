@@ -88,3 +88,6 @@ Contributions are welcome! Feel free to:
 ## License
 
 This project is open source and available under the AGPL-3.0 License.
+
+notice:
+License will change soon to MIT. I read a lot of comments around AGPL and copy-left. Perhaps AGPL is bit too much. MIT seems the way to go? 
